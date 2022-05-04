@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'KoPubDotumMedium';
+     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/KoPubDotumMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.menu{
+    font-family: 'KoPubDotumMedium';
+    /* display: flex; */
+    justify-content: center;
+    /* height: 100%; */
+    flex: 1;
+    height: calc(100vh - 120px);
+
+    position: sticky;
+    top: 100px
+}
