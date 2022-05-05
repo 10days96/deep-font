@@ -1,13 +1,15 @@
 @font-face {
-    font-family: 'KoPubDotumMedium';
-     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/KoPubDotumMedium.woff') format('woff');
+    font-family: "KoPubDotumMedium";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/KoPubDotumMedium.woff")
+        format("woff");
     font-weight: normal;
     font-style: normal;
 }
 
-
-.menu{
-    font-family: 'KoPubDotumMedium';
+.menu {
+    font-family: "KoPubDotumMedium";
+    font-size: 24px;
+    color: #4f5873;
     /* display: flex; */
     justify-content: center;
     /* height: 100%; */
@@ -15,5 +17,16 @@
     height: calc(100vh - 120px);
 
     position: sticky;
-    top: 100px
+    top: 100px;
+}
+
+.menu__item__contents {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+    list-style: none;
+}
+
+.onFocus {
+    max-height: 10em !important;
 }
