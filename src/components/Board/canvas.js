@@ -1,11 +1,18 @@
 import { useState } from "react";
 import style from "./Board.module.css"
 
-function inputText(props){
+function InputText(props){
+
+    const [inputValue, setInputValue] = useState("")
+
+    const onTextChange = (e) => {
+        setInputValue(e.target.value);
+    }
+
     return(
         <div>
             <input
-                type="text"
+                type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={inputValue}
             />
         </div>
     )
@@ -19,9 +26,9 @@ function Canvas(){
     return(
         <div className={style.canvas}>
             {text}
-            <div className={style.inputText}>
-                <inputText />
-            </div>
+            {/* <div className={style.inputText}>
+                <InputText />
+            </div> */}
         </div>
     )
 }

@@ -14,6 +14,7 @@
 
 .board{
     display: flex;
+    flex-flow: column;
     font-family: 'Cafe24Ssurround';
     background-color: #D5DCF2;
     justify-content: center;
@@ -25,19 +26,45 @@
 
 .canvas{
     font-family: 'Cafe24Ssurround';
+    text-align: center;
     background-color: white;
     width: 80%;
-    height: 65%;
+    height: 35%;
     justify-content: center;
     position: center;
-    border-radius: 5px;
-    box-shadow: 10px;
+    border-radius: 5px 5px 0px 0px;
+    border-bottom: 1px solid #D5DCF2;
+    box-shadow: 30px;
 }
 
 .inputText{
+    display: flex;
     font-family: 'KoPubDotumMedium';
+    /* margin: 2px; */
+
+    width: 80%;
+    height: 20%;
+
+    background-color: white;
+    border-radius: 0px 0px 5px 5px ;
+    box-shadow: 20px;
 }
 
+input {
+    font-family: 'KoPubDotumMedium';
+    width: 100%;
+    height: 95%;
+    font-size: 40px;
+    text-align: left;
+    /* border-radius: 0px 0px 5px 5px; */
+    box-shadow: 20px;
+    border: none;
+    padding-left: 20px;
+  }
+
+input:focus{
+    outline: none;
+}
 /* .horizonLine{
     width: "100%";
     border-top: "1px solid #aaa";
