@@ -6,11 +6,27 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cafe24Danjunghae';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Danjunghae.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+
+.notosanskr * { 
+ font-family: 'Noto Sans KR', sans-serif;
+}
+
 .menu {
-    font-family: "KoPubDotumMedium";
-    font-size: 24px;
-    color: #4f5873;
-    /* display: flex; */
     justify-content: center;
     /* height: 100%; */
     flex: 1;
@@ -20,7 +36,74 @@
     top: 100px;
 }
 
-.menu__item__contents {
+.menu__item{
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 10px;
+    color: #4f5873;
+    text-align: left;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.horizonLine {
+    width: 90%;
+    border-bottom: 1px solid #d5dcf2ab;
+    line-height: 0.1em;
+    margin: 10px 0px 20px;
+}
+
+.icon_padding{
+    padding-right: 50px;
+}
+
+.inputSlider{
+    font-family: "Noto Sans KR";
+    font-size: 5px;
+    width: 170%;
+    border: none;
+    border-bottom: 1px solid #d5dcf2ab;
+    margin: 0 16px;
+
+}
+
+.font_style_grid{
+    display: flex;
+    flex-flow: row;
+}
+
+.font_style_button{
+    display: flex;
+    flex-flow: column;
+    text-align: center;
+    font-size: 15px;
+    margin: 5px;
+    width: 40%;
+}
+
+.font_style_button > button {
+    border-radius: 5px;
+    border-color: #D5DCF2;
+    border-width: 1px;
+}
+
+.font_style_button_contrast{
+    font-family: "Cafe24Danjunghae";
+    font-size: 40px;
+    height: 70%;
+    color: black;
+}
+
+.font_style_button_round{
+    font-family: "Cafe24Ssurround";
+    font-size: 40px;
+    height: 70%;
+    color: black;
+}
+
+
+/* .menu__item__contents {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
@@ -29,4 +112,4 @@
 
 .onFocus {
     max-height: 10em !important;
-}
+} */

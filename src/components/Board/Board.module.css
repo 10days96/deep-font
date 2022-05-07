@@ -22,6 +22,7 @@
     flex: 6;
     border-radius: 5px;
     width: 100%;
+    margin-right: 50px;
 }
 
 .canvas{
@@ -43,7 +44,7 @@
     /* margin: 2px; */
 
     width: 80%;
-    height: 20%;
+    height: 15%;
 
     background-color: white;
     border-radius: 0px 0px 5px 5px ;
@@ -54,10 +55,10 @@ input {
     font-family: 'KoPubDotumMedium';
     width: 100%;
     height: 95%;
-    font-size: 40px;
+    font-size: 20px;
     text-align: left;
     /* border-radius: 0px 0px 5px 5px; */
-    box-shadow: 20px;
+    box-shadow: 15px;
     border: none;
     padding-left: 20px;
   }
