@@ -1,30 +1,12 @@
 import { useState } from "react";
+import axios from 'axios'
 import style from './Board.module.css'
-// import Canvas from './canvas'
-
-// function InputText(props){
-
-//     const [inputValue, setInputValue] = useState("")
-
-//     const onTextChange = (e) => {
-//         setInputValue(e.target.value);
-//     }
-
-//     return(
-//         <div>
-//             <input
-//                 type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={inputValue}
-//             />
-//         </div>
-//     )
-// }
-
 
 function Canvas(props){
 
     return(
         <div>
-            {props.text}
+            {/* {props.text} */}
         </div>
     )
 }

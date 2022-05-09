@@ -2,9 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFont, faPalette, faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import 'antd/dist/antd.css'
 import { Slider, InputNumber, Row, Col } from 'antd';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import style from "components/Menu/Menu.module.css";
+import axios from "axios";
 
 function HorizonLine(){
     return (
@@ -57,23 +58,40 @@ function IntegerStep() {
 
 }
 
+
+
 function Menu() {
+
+    // const [loading, setLoading] = useState(false)
+
+    const HandleContrast = (e) => {
+        axios({
+            method: 'post',
+            url: 'data',
+            data: {
+                style: "contrast",
+                comment: "가나다라"
+            }
+        }).then(function(response){
+            console.log(response.data)
+        })
+    }
 
     return (
         <div className={style.menu}>
             <div className={style.menu__item}>
                 <FontAwesomeIcon icon={faFont} className={style.icon_padding}/>
-                굵기
+                    굵기
                 <HorizonLine/>
                 <IntegerStep/>
             </div>
             <div className={style.menu__item}>
                 <FontAwesomeIcon icon={faPalette} className={style.icon_padding}/>
-                스타일
+                    스타일
                 <HorizonLine />
                 <div className={style.font_style_grid}>
                     <div className={style.font_style_button}>
-                        <button className={style.font_style_button_contrast}>
+                        <button className={style.font_style_button_contrast} onClick={HandleContrast}>
                             별
                         </button>
                         대비

@@ -1,9 +1,20 @@
-import flask
+from crypt import methods
+from flask import Flask, jsonify, request
 
-server = flask.Flask(__name__, static_url_path="")
+
+app = Flask(__name__)
 
 
-@server.route("/")
-def index():
-    return server.send_static_file("index.html")
+@app.route("/data", methods=["POST"])
+def get_style():
 
+    if request.is_json:
+        data = request.get_json()
+        print(data["style"])
+        print(data["comment"])
+
+    return "파일 경로를 보내드립니다"
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
