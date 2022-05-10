@@ -8,8 +8,9 @@
 }
 
 .header{
-    height: 100px;
-    /* padding-top: 0.1rem; */
+    height: 80px;
+    padding-top: 0.1rem;
+    font-size: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,6 +18,8 @@
 
 .headerTitle{
     font-family: "Cafe24Ssurround";
+    color: #7983a0;
+    padding-top: 0.3rem;
     width: 98%;
     height: 97%;
     display: flex;
