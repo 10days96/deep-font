@@ -9,6 +9,7 @@ import { Slider, InputNumber, Row, Col } from 'antd';
 
 import { StyleTextContextStore } from "components/Context/StyleCommmentContext";
 import style from "components/Menu/Menu.module.css";
+import SkeletonInput from "antd/lib/skeleton/Input";
 
 function HorizonLine(){
     return (
@@ -65,25 +66,50 @@ function IntegerStep() {
 
 function Menu() {
 
-    const [loading, setLoading] = useState(false);
     const StyleInfo = useContext(StyleTextContextStore);
 
-    const HandleContrast = (e) => {
+    const HandleContrastButton = (e) => {
         console.log(StyleInfo.text)
-        axios({
-            method: 'post',
-            url: 'data',
-            data: {
-                style: "contrast",
-                comment: StyleInfo.text
-            }
-        }).then(function(response){
-            console.log(response.data);
-            StyleInfo.setImgPath(response.data);
-            // setImgPath(response.data)
-        }).catch(function(){
-            console.log("에러");
-        })
+        // SkeletonInput()
+        
+
+        // 로딩바 작업용 주석
+        // axios({
+        //     method: 'post',
+        //     url: 'data',
+        //     data: {
+        //         style: "contrast",
+        //         comment: StyleInfo.text
+        //     }
+        // }).then(function(response){
+        //     console.log(response.data);
+        //     StyleInfo.setImgPath(response.data);
+        //     // setImgPath(response.data)
+        // }).catch(function(){
+        //     console.log("에러");
+        // })
+    }
+
+    const HandleRoundButton = (e) => {
+        console.log(StyleInfo.text)
+        // SkeletonInput()
+        
+
+        // 로딩바 작업용 주석
+        // axios({
+        //     method: 'post',
+        //     url: 'data',
+        //     data: {
+        //         style: "contrast",
+        //         comment: StyleInfo.text
+        //     }
+        // }).then(function(response){
+        //     console.log(response.data);
+        //     StyleInfo.setImgPath(response.data);
+        //     // setImgPath(response.data)
+        // }).catch(function(){
+        //     console.log("에러");
+        // })
     }
 
     return (
@@ -100,13 +126,13 @@ function Menu() {
                 <HorizonLine />
                 <div className={style.font_style_grid}>
                     <div className={style.font_style_button}>
-                        <button className={style.font_style_button_contrast} onClick={HandleContrast}>
+                        <button className={style.font_style_button_contrast} onClick={HandleContrastButton}>
                             별
                         </button>
                         대비
                     </div>
                     <div className={style.font_style_button}>
-                        <button className={style.font_style_button_round}>
+                        <button className={style.font_style_button_round} onClick={HandleRoundButton}>
                             뚠
                         </button>
                         둥글게

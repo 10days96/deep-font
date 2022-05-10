@@ -3,18 +3,19 @@ import axios from 'axios'
 
 import { StyleTextContextStore } from "components/Context/StyleCommmentContext";
 import style from './Board.module.css'
+import Spinner from "img/Ellipsis-2.9s-200px.gif"
 
 function Canvas(props){
 
     // const imgPath = {props.path
-
+    const loading = props.loading
 
     return(
-        <div>
+        <div className = {loading === true ? style.canvasLoading : style.canvas}>
             {
-                props.path !== ''
-                ? <img src={props.path}/>
-                : null
+                loading === true
+                ? <img src={Spinner} /> 
+                : <img src={props.path}/>
             }
         </div>
     )
@@ -23,21 +24,22 @@ function Canvas(props){
 function Board() {
 
     const StyleInfo = useContext(StyleTextContextStore);
+    const [loading, setLoading] = useState(false);
 
     const onTextChange = (e) => {
         StyleInfo.setText(e.target.value);
+        setLoading(true)
     }
 
     return(
         <div className={style.board}>
-            <div className={style.canvas}>
-                <Canvas path={StyleInfo.imgPath}/>
-            </div>
+            <Canvas path={StyleInfo.imgPath} loading={loading}/>
             <div className={style.inputText}>
                 <input
                     type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={StyleInfo.text}
+                    maxLength='6'
                 />
-            </ div>
+            </div>
         </div>
     )
 }
