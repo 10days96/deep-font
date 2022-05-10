@@ -1,32 +1,41 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from 'axios'
+
+import { StyleTextContextStore } from "components/Context/StyleCommmentContext";
 import style from './Board.module.css'
 
 function Canvas(props){
 
+    // const imgPath = {props.path
+
+
     return(
         <div>
-            {/* {props.text} */}
+            {
+                props.path !== ''
+                ? <img src={props.path}/>
+                : null
+            }
         </div>
     )
 }
 
 function Board() {
 
-    const [inputValue, setInputValue] = useState("")
+    const StyleInfo = useContext(StyleTextContextStore);
 
     const onTextChange = (e) => {
-        setInputValue(e.target.value);
+        StyleInfo.setText(e.target.value);
     }
 
     return(
         <div className={style.board}>
             <div className={style.canvas}>
-                <Canvas text={inputValue}/>
+                <Canvas path={StyleInfo.imgPath}/>
             </div>
             <div className={style.inputText}>
                 <input
-                    type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={inputValue}
+                    type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={StyleInfo.text}
                 />
             </ div>
         </div>

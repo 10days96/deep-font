@@ -2,7 +2,7 @@ import "App.css";
 import Header from "components/Header/header";
 import Menu from "components/Menu/menu";
 import Board from "components/Board/board";
-import { useEffect, useState } from "react";
+import StyleTextContext from "components/Context/StyleCommmentContext";
 
 function App() {
 
@@ -10,8 +10,10 @@ function App() {
         <div className="App">
             <Header />
             <div className="container">
-                <Menu />
-                <Board />
+                <StyleTextContext>
+                    <Menu />
+                    <Board />
+                </StyleTextContext>
             </div>
         </div>
     );
