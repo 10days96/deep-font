@@ -71,6 +71,8 @@
 .font_style_grid{
     display: flex;
     flex-flow: row;
+    gap: 20px 2%;
+    flex-wrap: wrap;
 }
 
 .font_style_button{

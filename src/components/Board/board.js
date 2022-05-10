@@ -39,6 +39,9 @@ function Board() {
                     type="text" placeholder="글자를 입력해주세요" onChange={onTextChange} value={StyleInfo.text}
                     maxLength='6'
                 />
+                <div style={{textAlign: "left", fontSize: "10px"}}>
+                    {StyleInfo.text.length} / 6
+                </div>
             </div>
         </div>
     )

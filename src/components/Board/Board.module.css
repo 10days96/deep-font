@@ -80,6 +80,7 @@ input {
     box-shadow: 15px;
     border: none;
     padding-left: 20px;
+    flex: 8;
   }
 
 input:focus{

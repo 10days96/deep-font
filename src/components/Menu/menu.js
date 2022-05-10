@@ -137,7 +137,13 @@ function Menu() {
                         </button>
                         둥글게
                     </div>
-                </div>
+                    <div className={style.font_style_button}>
+                        <button className={style.font_style_button_round} onClick={HandleRoundButton}>
+                            획
+                        </button>
+                        세리프
+                    </div>
+                </div>   
             </div >
             <HorizonLine />
             <div className={style.menu__item}>
