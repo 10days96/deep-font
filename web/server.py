@@ -1,65 +1,130 @@
 # from crypt import methods
-from flask import Flask, jsonify, request
-
-from PIL import Image
 from pathlib import Path
+from datetime import datetime
+
+from flask import Flask, jsonify, request, render_template
+from PIL import Image
 import torch
 from torchvision import transforms, utils
+
+import numpy as np
+
 from model import Generator, Encoder
+
 
 TRANSFORM = transforms.Compose(
     [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 )
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 
 
-@app.route("/data", methods=["POST"])
+@app.route("/img", methods=["POST"])
 def get_style():
 
     data_path = root_path / "web" / "img"
     content_img = data_path / "content"
-    style_img = data_path / "style"
+    style_cache = root_path / "web" / "cache" / "style.npy"
+
+    style_np = np.load(style_cache)
 
     if request.is_json:
+
+        s = datetime.now().strftime("%Y-%m-%d%H%M%S")
         data = request.get_json()
         style = data["style"]
-        comment = data["comment"]
+        text = data["text"]
+        text = list(text)
 
-        if style == "contrast":
-            content_img = list(content_img.glob("**/*"))
-            print(len(content_img))
-            style_img = style_img / "contrast.png"
-
-            style_tensor = TRANSFORM(Image.open(style_img).convert("RGB")).to(device)
-            style_feat = encoder(style_tensor.unsqueeze(0))
+        # contrast
+        if style == "1":
+            style_feat = torch.from_numpy(style_np)[0].to(device)
+            style_feat = style_feat.unsqueeze(dim=0)
 
             result = []
-            for j, c in enumerate(content_img):
-                content_tensor = TRANSFORM(Image.open(c).convert("RGB")).to(device)
+            for c in text:
+                content_path = content_img / f"{c}.png"
+                content_tensor = TRANSFORM(Image.open(content_path).convert("RGB")).to(
+                    device
+                )
                 cnt_feats = encoder(content_tensor.unsqueeze(0))
 
                 sample, _ = g_ema(
-                    [cnt_feats[-1], style_feat[-1]],
-                    inject_index=4,
-                    input_is_latent=True,
+                    [cnt_feats[-1], style_feat], inject_index=4, input_is_latent=True,
                 )
-                result.append(sample)
+                result.append(sample.squeeze(0))
 
-            result = torch.cat(
-                (result[0].squeeze(0), result[1].squeeze(0), result[0].squeeze(0)),
-                dim=-1,
-            )
+            # print(len(result))
 
-            save_path = data_path / "result" / f"{style}.png"
+            result = torch.cat(result, dim=-1)
+
+            s = datetime.now().strftime("%Y-%m-%d%H%M%S")
+
+            save_path = root_path / "web" / "static" / f"{s}.png"
             utils.save_image(
                 result, save_path, normalize=True, range=(-1, 1),
             )
 
-    print("DONE")
+    if style == "2":
+        style_feat = torch.from_numpy(style_np)[1].to(device)
+        style_feat = style_feat.unsqueeze(dim=0)
 
-    return f"{style}.png"
+        result = []
+        for c in text:
+            content_path = content_img / f"{c}.png"
+            content_tensor = TRANSFORM(Image.open(content_path).convert("RGB")).to(
+                device
+            )
+            cnt_feats = encoder(content_tensor.unsqueeze(0))
+
+            sample, _ = g_ema(
+                [cnt_feats[-1], style_feat], inject_index=4, input_is_latent=True,
+            )
+            result.append(sample.squeeze(0))
+
+        # print(len(result))
+
+        result = torch.cat(result, dim=-1)
+
+        save_path = root_path / "web" / "static" / f"{s}.png"
+        utils.save_image(
+            result, save_path, normalize=True, range=(-1, 1),
+        )
+
+    if style == "3":
+        style_feat = torch.from_numpy(style_np)[2].to(device)
+        style_feat = style_feat.unsqueeze(dim=0)
+
+        result = []
+        for c in text:
+            content_path = content_img / f"{c}.png"
+            content_tensor = TRANSFORM(Image.open(content_path).convert("RGB")).to(
+                device
+            )
+            cnt_feats = encoder(content_tensor.unsqueeze(0))
+
+            sample, _ = g_ema(
+                [cnt_feats[-1], style_feat], inject_index=4, input_is_latent=True,
+            )
+            result.append(sample.squeeze(0))
+
+        result = torch.cat(result, dim=-1)
+
+        save_path = root_path / "web" / "static" / f"{s}.png"
+        utils.save_image(
+            result, save_path, normalize=True, range=(-1, 1),
+        )
+
+    print("이미지 생성 완료")
+    torch.cuda.empty_cache()
+
+    return f"{s}.png"
+
+
+@app.route("/")
+def main():
+    return render_template("index.html")
 
 
 if __name__ == "__main__":

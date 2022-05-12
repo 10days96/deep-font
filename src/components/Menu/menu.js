@@ -13,16 +13,7 @@ import SkeletonInput from "antd/lib/skeleton/Input";
 
 function HorizonLine(){
     return (
-        <div className={style.horizonLine}
-        //   style={{
-        //     width: "90%",
-        //     textAlign: "center",
-        //     borderBottom: "1px solid #aaa",
-        //     lineHeight: "0.1em",
-        //     margin: "10px 0px 20px",
-        //   }}
-        >
-          {/* <span style={{ background: "#fff", padding: "0 10px" }}>{text}</span> */}
+        <div className={style.horizonLine}>
           <span style={{ background: "#fff"}}></span>
         </div>
       ); 
@@ -69,48 +60,64 @@ function Menu() {
     const StyleInfo = useContext(StyleTextContextStore);
 
     const HandleContrastButton = (e) => {
-        console.log(StyleInfo.text)
-        // SkeletonInput()
-        
-
-        // 로딩바 작업용 주석
-        // axios({
-        //     method: 'post',
-        //     url: 'data',
-        //     data: {
-        //         style: "contrast",
-        //         comment: StyleInfo.text
-        //     }
-        // }).then(function(response){
-        //     console.log(response.data);
-        //     StyleInfo.setImgPath(response.data);
-        //     // setImgPath(response.data)
-        // }).catch(function(){
-        //     console.log("에러");
-        // })
+        StyleInfo.setFlag(false);
+        StyleInfo.setLoading(true);
+        axios({
+            method: 'post',
+            url: 'img',
+            data: {
+                style: "1",
+                text: StyleInfo.text
+            }
+        }).then(function(response){
+            console.log("데이터 송신 완료");
+            StyleInfo.setImgPath(response.data);
+            StyleInfo.setLoading(false)
+        }).catch(function(){
+            console.log("에러");
+        })
     }
 
     const HandleRoundButton = (e) => {
-        console.log(StyleInfo.text)
-        // SkeletonInput()
-        
-
-        // 로딩바 작업용 주석
-        // axios({
-        //     method: 'post',
-        //     url: 'data',
-        //     data: {
-        //         style: "contrast",
-        //         comment: StyleInfo.text
-        //     }
-        // }).then(function(response){
-        //     console.log(response.data);
-        //     StyleInfo.setImgPath(response.data);
-        //     // setImgPath(response.data)
-        // }).catch(function(){
-        //     console.log("에러");
-        // })
+        StyleInfo.setFlag(false)
+        StyleInfo.setLoading(true);
+        axios({
+            method: 'post',
+            url: 'img',
+            data: {
+                style: "2",
+                text: StyleInfo.text
+            }
+        }).then(function(response){
+            console.log("데이터 송신 완료");
+            StyleInfo.setImgPath(response.data);
+            StyleInfo.setLoading(false);
+        }).catch(function(){
+            console.log("에러");
+        })
     }
+
+    const HandleSerifButton = (e) => {
+        StyleInfo.setFlag(false);
+        StyleInfo.setLoading(true);
+        axios({
+            method: 'post',
+            url: 'img',
+            data: {
+                style: "3",
+                text: StyleInfo.text
+            }
+        }).then(function(response){
+            console.log("데이터 송신 완료");
+            StyleInfo.setImgPath(response.data);
+            setTimeout(() => {}, 1000)
+            StyleInfo.setLoading(false);
+        }).catch(function(){
+            console.log("에러");
+        })
+    }
+
+    
 
     return (
         <div className={style.menu}>
@@ -138,7 +145,7 @@ function Menu() {
                         둥글게
                     </div>
                     <div className={style.font_style_button}>
-                        <button className={style.font_style_button_round} onClick={HandleRoundButton}>
+                        <button className={style.font_style_button_serif} onClick={HandleSerifButton}>
                             획
                         </button>
                         세리프

@@ -4,17 +4,21 @@ export const StyleTextContextStore = createContext();
 
 const StyleTextContext = (props) => {
 
-    const [style, setStyle] = useState('');
+    const [flag, setFlag] = useState(true);
     const [text, setText] = useState('');
+    const [loading, setLoading] = useState(true);
     const [imgPath, setImgPath] = useState('');
 
+
     const StyleInfo = {
-        style,
-        setStyle,
+        flag,
+        setFlag,
         text,
         setText,
         imgPath,
-        setImgPath
+        setImgPath,
+        loading,
+        setLoading
     }
 
     return(<StyleTextContextStore.Provider value={StyleInfo}>

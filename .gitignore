@@ -279,6 +279,10 @@ cython_debug/
 ### pytorch ###
 *.pt
 *.npz
+
+### Image ###
+*.png
+
 ### react ###
 .DS_*
 logs
