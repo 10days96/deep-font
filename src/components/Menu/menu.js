@@ -21,12 +21,32 @@ function HorizonLine(){
 
 function IntegerStep() {
     
+    const StyleInfo = useContext(StyleTextContextStore);
 
     const [state, setState] = useState(1);
     const inputValue = state;
 
     const onChange = (value) => {
         setState(value)
+        StyleInfo.setFlag(false);
+        StyleInfo.setLoading(true);
+        axios({
+            method: 'post',
+            url: 'weight',
+            data: {
+                style: StyleInfo.style,
+                weight: state,
+                text: StyleInfo.text
+            }
+        }).then(function(response){
+            console.log("데이터 송신 완료");
+            console.log(StyleInfo.style)
+            StyleInfo.setStyle(StyleInfo.style)
+            StyleInfo.setImgPath(response.data);
+            StyleInfo.setLoading(false)
+        }).catch(function(){
+            console.log("에러");
+        })
     }
 
     return(
@@ -34,7 +54,7 @@ function IntegerStep() {
             <Col span={12}>
                 <Slider
                 min={1}
-                max={20}
+                max={5}
                 onChange={onChange}
                 value={typeof inputValue === 'number' ? inputValue : 0}
             />
@@ -43,7 +63,7 @@ function IntegerStep() {
                 <InputNumber
                     className={style.inputSlider}
                     min={1}
-                    max={20}
+                    max={5}
                     value={inputValue}
                     onChange={onChange}
                 />
@@ -71,6 +91,7 @@ function Menu() {
             }
         }).then(function(response){
             console.log("데이터 송신 완료");
+            StyleInfo.setStyle(1)
             StyleInfo.setImgPath(response.data);
             StyleInfo.setLoading(false)
         }).catch(function(){
@@ -90,6 +111,7 @@ function Menu() {
             }
         }).then(function(response){
             console.log("데이터 송신 완료");
+            StyleInfo.setStyle(2)
             StyleInfo.setImgPath(response.data);
             StyleInfo.setLoading(false);
         }).catch(function(){
@@ -109,8 +131,8 @@ function Menu() {
             }
         }).then(function(response){
             console.log("데이터 송신 완료");
+            StyleInfo.setStyle(3)
             StyleInfo.setImgPath(response.data);
-            setTimeout(() => {}, 1000)
             StyleInfo.setLoading(false);
         }).catch(function(){
             console.log("에러");
@@ -125,7 +147,7 @@ function Menu() {
                 <FontAwesomeIcon icon={faFont} className={style.icon_padding}/>
                     굵기
                 <HorizonLine/>
-                <IntegerStep/>
+                <IntegerStep fontStyle={StyleInfo.style}/>
             </div>
             <div className={style.menu__item}>
                 <FontAwesomeIcon icon={faPalette} className={style.icon_padding}/>

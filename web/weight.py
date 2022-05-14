@@ -1,5 +1,7 @@
 import argparse
-from matplotlib import axis
+from datetime import datetime
+
+# from matplotlib import axis
 from torchvision import transforms, utils
 import os
 from PIL import Image
@@ -20,52 +22,156 @@ def get_name(path):
     return name
 
 
-def generate(args, g_ema, encoder, device, mean_latent, test_path, size):
+def gothic_weight(g_ema, encoder, device):
+    # 가중치 변화 없이
+    s = datetime.now().strftime("%Y-%m-%d%H%M%S")
+
+    with torch.no_grad():
+        # 평가 모드 키기
+        g_ema.eval()
+        encoder.eval()
+
+        content = Path("web/img/content")
+        content_img = content / "밤.png"
+
+        # style_r1 = Path("web/img/style/GothicA1-Black").glob("**/*.png")
+        # style_r2 = Path("web/img/style/GothicA1-Light").glob("**/*.png")
+
+        # style_r1 = Path("web/img/style/Cafe24Ssurround").glob("**/*.png")
+        # style_r2 = Path("web/img/style/Cafe24SsurroundAir").glob("**/*.png")
+
+        # style_r1 = Path("web/img/style/국립박물관문화재단클래식B").glob("**/*.png")
+        # style_r2 = Path("web/img/style/국립박물관문화재단클래식L").glob("**/*.png")
+
+        style_r1 = Path("web/img/style/SourceHanSerifKR-Heavy").glob("**/*.png")
+        style_r2 = Path("web/img/style/SourceHanSerifKR-ExtraLight").glob("**/*.png")
+
+        r_bold = torch.stack(
+            [TRANSFORM(Image.open(i).convert("RGB")) for i in style_r1]
+        ).to(device)
+        r_bold_batches = torch.split(r_bold, 1)
+
+        r_thin = torch.stack(
+            [TRANSFORM(Image.open(i).convert("RGB")) for i in style_r2]
+        ).to(device)
+        r_thin_batches = torch.split(r_thin, 1)
+
+        cl_bold, cl_thin = [], []
+        for i in range(len(r_bold_batches)):
+            _cl_b = encoder(r_bold_batches[i])
+            _cl_t = encoder(r_thin_batches[i])
+
+            cl_bold.append(_cl_b[-1])
+            cl_thin.append(_cl_t[-1])
+
+        b_feat = torch.cat(cl_bold).mean(dim=0, keepdim=True)
+        th_feat = torch.cat(cl_thin).mean(dim=0, keepdim=True)
+
+        content_tensor = TRANSFORM(Image.open(content_img).convert("RGB")).to(device)
+        cnt_feat = encoder(content_tensor.unsqueeze(0))[-1]
+
+        th_axis, _ = g_ema([cnt_feat, th_feat], inject_index=4, input_is_latent=True)
+
+        bold_axis, _ = g_ema([cnt_feat, b_feat], inject_index=4, input_is_latent=True)
+
+        # th_feat_save = th_feat.clone().detach()
+
+        max_index = torch.argmax(abs(th_feat - b_feat))
+        weight_interpolation = torch.linspace(th_feat[0][0], b_feat[0][0], steps=10)
+        print(th_feat[0][0], b_feat[0][0])
+        print(weight_interpolation)
+
+        result = []
+        result.append(th_axis.squeeze(0))
+        for w in weight_interpolation:
+            th_feat[0][0] = w
+            sample, _ = g_ema([cnt_feat, th_feat], inject_index=4, input_is_latent=True)
+            result.append(sample.squeeze(0))
+
+        result.append(bold_axis.squeeze(0))
+
+        result = torch.cat(result, dim=-1)
+        root = Path().absolute()
+        save_path = root / "web" / "img" / "result" / "weight" / f"{s}.png"
+
+        utils.save_image(
+            result, save_path, normalize=True, range=(-1, 1),
+        )
+
+        # th_feat = th_feat_save.clone().detach()
+        result = []
+
+        torch.cuda.empty_cache()
+
+    print("DONE")
+
+
+def generate(g_ema, encoder, device):
     # 가중치 변화 없이
     with torch.no_grad():
         # 평가 모드 키기
         g_ema.eval()
         encoder.eval()
 
-        # Get a list of the src characters.
-        content = Path("img/content")
+        content = Path("web/img/content")
         content_img = content / "밤.png"
 
-        style = Path("img/style")
-        thin = style / "Thing.png"
-        bold = style / "ExtraBold.png"
+        style = Path("web/img/style")
+        thin_round = style / "thin_round.png"
+        bold_round = style / "2.png"
+        # bold_round = style / "bold_round.png"
 
-        style_thin = TRANSFORM(Image.open(thin).convert("RGB")).to(device)
-        style_thin_feat = encoder(style_thin.unsqueeze(0))
+        thin_contrast = style / "thin_contrast.png"
+        bold_contrast = style / "1.png"
+        # bold_contrast = style / "bold_contrast.png"
 
-        style_bold = TRANSFORM(Image.open(bold).convert("RGB")).to(device)
-        style_bold_feat = encoder(style_bold.unsqueeze(0))
+        thin_serif = style / "thin_serif.png"
+        bold_serif = style / "bold_serif.png"
 
-        result = []
+        style_path = [
+            [thin_round, bold_round],
+            [thin_contrast, bold_contrast],
+            [thin_serif, bold_serif],
+        ]
+        style_feats = []
+
+        for s in style_path:
+            thin = TRANSFORM(Image.open(s[0]).convert("RGB")).to(device)
+            thin_feat = encoder(thin.unsqueeze(0))[-1]
+
+            bold = TRANSFORM(Image.open(s[1]).convert("RGB")).to(device)
+            bold_feat = encoder(bold.unsqueeze(0))[-1]
+
+            style_feats.append([thin_feat, bold_feat])
+
         content_tensor = TRANSFORM(Image.open(content_img).convert("RGB")).to(device)
-        cnt_feats = encoder(content_tensor.unsqueeze(0))
+        cnt_feats = encoder(content_tensor.unsqueeze(0))[-1]
 
-        axis, _ = g_ema([cnt_feats[-1], ])
+        for i, s in enumerate(style_feats):
+            weight_index = torch.argmax(abs(s[0] - s[1]))
+            print(weight_index)
 
-        weight_index = torch.argmax(abs(style_bold - style_thin))
-        print(weight_index)
-        weight_interpolation = torch.linspace(, ,step=6)
+            weight_interpolation = torch.linspace(
+                s[0][0][weight_index], s[1][0][weight_index], steps=5,
+            )
 
-        # sample, _ = g_ema(
-        #     [cnt_feats[-1], style_feat[-1]],
-        #     inject_index=4,
-        #     input_is_latent=True,
-        # )
-        #     result.append(sample)
+            result = []
+            for w in weight_interpolation:
+                s[0][0][weight_index] = w
+                sample, _ = g_ema(
+                    [cnt_feats, s[0]], inject_index=4, input_is_latent=True
+                )
+                result.append(sample.squeeze(0))
 
-        # result = torch.cat(
-        #     (result[0].squeeze(0), result[1].squeeze(0), result[0].squeeze(0)),
-        #     dim=-1,
-        # )
+            result = torch.cat(result, dim=-1)
+            root = Path().absolute()
+            save_path = root / "web" / "img" / "result" / f"{i + 1}.png"
 
-        # utils.save_image(
-        #     result, f"./img/style_{i}_{j}.png", normalize=True, range=(-1, 1),
-        # )
+            utils.save_image(
+                result, save_path, normalize=True, range=(-1, 1),
+            )
+
+        torch.cuda.empty_cache()
 
     print("DONE")
 
@@ -96,12 +202,6 @@ if __name__ == "__main__":
         help="number of vectors to calculate mean for the truncation",
     )
     parser.add_argument(
-        "--ckpt",
-        type=str,
-        default="checkpoint/140000.pt",
-        help="path to the model checkpoint",
-    )
-    parser.add_argument(
         "--channel_multiplier",
         type=int,
         default=1,
@@ -114,6 +214,9 @@ if __name__ == "__main__":
     args.latent = 20
     # mapping 네트워크 설정
     args.n_mlp = 8
+    root_path = Path().absolute()
+    ckpt = root_path / "web" / "checkpoint" / "20_8.pt"
+    # ckpt = root_path / "web" / "checkpoint" / "64_8.pt"
 
     # 생성자 레이어 설정
     g_ema = Generator(
@@ -124,7 +227,7 @@ if __name__ == "__main__":
         args.size, args.latent, channel_multiplier=args.channel_multiplier
     ).to(device)
     # 가중치 불러오기
-    checkpoint = torch.load(args.ckpt, map_location="cuda:0")
+    checkpoint = torch.load(ckpt, map_location="cuda:0")
 
     # 가중치 불러와서 생성자로 설정
     g_ema.load_state_dict(checkpoint["g_ema"])
@@ -138,4 +241,6 @@ if __name__ == "__main__":
         mean_latent = None
 
     # 이미지 생성
-    generate(args, g_ema, encoder, device, mean_latent, args.test_path, args.size)
+    # generate(g_ema, encoder, device)
+    gothic_weight(g_ema, encoder, device)
+
